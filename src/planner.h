@@ -1,7 +1,3 @@
-//
-// Created by Eugen Nekhai on 24/10/2017.
-//
-
 #define LANE_CHANGE_COST_SIDE_F 0.9
 #define LANE_CHANGE_COST_SIDE_R 0.5
 #define LANE_CHANGE_COST_AHEAD  0.9
@@ -94,11 +90,11 @@ private:
 
     double ClosestDistanceBehind(vector<Vehicle> &vehicles, double s, int lane);
 
-    projection_t LeftCourseSetpoints(telemetry_t &telemetry_data);
+    projection_t LeftCourse(telemetry_t &telemetry_data);
 
-    projection_t RightCourseSetpoints(telemetry_t &telemetry_data);
+    projection_t RightCourse(telemetry_t &telemetry_data);
 
-    projection_t StraightSetpoints(telemetry_t &telemetry_data);
+    projection_t StraightCourse(telemetry_t &telemetry_data);
 
     vector<double> computeMinimumJerk(vector<double> start, vector<double> end, double max_time, double time_inc);
 

@@ -1,7 +1,3 @@
-//
-// Created by Eugen Nekhai on 24/10/2017.
-//
-
 #include "vehicle.h"
 
 int DToLane(double d) {

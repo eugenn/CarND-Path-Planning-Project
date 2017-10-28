@@ -1,7 +1,3 @@
-//
-// Created by Eugen Nekhai on 24/10/2017.
-//
-
 #ifndef PATH_PLANNING_VEHICLE_H
 #define PATH_PLANNING_VEHICLE_H
 

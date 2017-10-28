@@ -1,5 +1,18 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
+
+![alt text](road.png)
+
+## Path Planning
+In this project I tried to solve 3 problems:
+- Smoothing the existing waypoint data
+- Generating minimum jerk trajectories based on a minimal set of controls
+- Determining the best action based on model cost analysis
+
+To achieve this goal it's been developed a complete and optimal trajectory planner which implements a Finite State Machine and makes decisions based on sensor fusion and localization data. The planner has to produce feasible, safe and legal trajectories which do not provoke any kind of penalties.
+
+## Implementation
+
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
@@ -141,7 +154,4 @@ that's just a guess.
 
 One last note here: regardless of the IDE used, every submitted project must
 still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 

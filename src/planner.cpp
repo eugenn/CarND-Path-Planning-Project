@@ -1,7 +1,3 @@
-//
-// Created by Eugen Nekhai on 24/10/2017.
-//
-
 #include "planner.h"
 
 PathPlanner::PathPlanner() {
@@ -13,8 +9,20 @@ PathPlanner::~PathPlanner() {
 }
 
 // For converting back and forth between radians and degrees.
-//constexpr double pi() { return M_PI; }
+constexpr double pi() { return M_PI; }
 
+double LaneToD(int lane) {
+    if (lane == 1) {
+        return 2.0;
+    }
+    if (lane == 2) {
+        return 6.0;
+    }
+    if (lane == 3) {
+        return 10.0;
+    }
+    return 0;
+}
 
 void PathPlanner::Init(state_t state) {
     this->state = state;
@@ -130,7 +138,7 @@ double PathPlanner::KeepLaneCost(telemetry_t &telemetry_data) {
 }
 
 // Determine new Path whilst going on the left course
-projection_t PathPlanner::LeftCourseSetpoints(telemetry_t &telemetry_data) {
+projection_t PathPlanner::LeftCourse(telemetry_t &telemetry_data) {
     projection_t retval = {
             telemetry_data.s,
             telemetry_data.speed,
@@ -143,7 +151,7 @@ projection_t PathPlanner::LeftCourseSetpoints(telemetry_t &telemetry_data) {
 }
 
 // Determine new Path whilst going on the right course
-projection_t PathPlanner::RightCourseSetpoints(telemetry_t &telemetry_data) {
+projection_t PathPlanner::RightCourse(telemetry_t &telemetry_data) {
     projection_t retval = {
             telemetry_data.s,
             telemetry_data.speed,
@@ -156,7 +164,7 @@ projection_t PathPlanner::RightCourseSetpoints(telemetry_t &telemetry_data) {
 }
 
 // Determine new Path whilst going on the straight course
-projection_t PathPlanner::StraightSetpoints(telemetry_t &telemetry_data) {
+projection_t PathPlanner::StraightCourse(telemetry_t &telemetry_data) {
     vector<Vehicle> &vehicles = telemetry_data.vehicles;
     double &s = telemetry_data.s;
     int lane = telemetry_data.lane;
@@ -205,13 +213,13 @@ path_t PathPlanner::Path(vector<Vehicle> &vehicles, vector<double> &map_waypoint
 
     switch (NextAction(telemetry_data)) {
         case LEFT:
-            points = LeftCourseSetpoints(telemetry_data);
+            points = LeftCourse(telemetry_data);
             break;
         case RIGHT:
-            points = RightCourseSetpoints(telemetry_data);
+            points = RightCourse(telemetry_data);
             break;
         case KEEP:
-            points = StraightSetpoints(telemetry_data);
+            points = StraightCourse(telemetry_data);
             break;
     }
 
@@ -222,23 +230,6 @@ path_t PathPlanner::Path(vector<Vehicle> &vehicles, vector<double> &map_waypoint
     state.last_speed = points.end_speed;
 
     return path;
-}
-
-// For converting back and forth between radians and degrees.
-constexpr double pi() { return M_PI; }
-
-
-double LaneToD(int lane) {
-    if (lane == 1) {
-        return 2.0;
-    }
-    if (lane == 2) {
-        return 6.0;
-    }
-    if (lane == 3) {
-        return 10.0;
-    }
-    return 0;
 }
 
 // Calculates jerk minimizing path
