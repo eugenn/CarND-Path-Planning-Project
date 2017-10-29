@@ -4,11 +4,11 @@
 
 #define MAX_COST                1000.0
 
-#define PATH_PLAN_SECONDS       2.0
+#define PATH_PLAN_SECONDS       2.5
 #define PATH_PLAN_INCREMENT     0.02
 
 
-#define MAX_SPEED_M_S           19.5
+#define MAX_SPEED_M_S           19.0
 #define MIN_SPEED_M_S           10.0
 
 #define DISTANCE_ADJUSTMENT     4.0
@@ -96,7 +96,7 @@ private:
 
     projection_t StraightCourse(telemetry_t &telemetry_data);
 
-    vector<double> computeMinimumJerk(vector<double> start, vector<double> end, double max_time, double time_inc);
+    vector<double> MinimumJerk(vector<double> start, vector<double> end, double max_time, double time_inc);
 
     vector<double>
     getXY(double s, double d, const vector<double> &maps_s, const vector<double> &maps_x, const vector<double> &maps_y);

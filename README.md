@@ -11,8 +11,52 @@ In this project I tried to solve 3 problems:
 
 To achieve this goal it's been developed a complete and optimal trajectory planner which implements a Finite State Machine and makes decisions based on sensor fusion and localization data. The planner has to produce feasible, safe and legal trajectories which do not provoke any kind of penalties.
 
-## Implementation
+### Implementation
+1. Smooth Path Generation
+The main track is about 7km and has 181 waypoints it is about 33-35m between each point. The simulator consumes vectors of map points, moving the car through each point specified every 20 ms.
+We can send to the car just (X,Y) coordinates and depends on that values the car can move faster or slower with acceleration and jerk.
+One of the approach of generating valid values is to dynamically interpolate points above cars in the front direction. (see the project walkthrough [video](https://youtu.be/3QP3hJHm4WM))
+Another idea which looks like a bit simpler is to resample once all set of points and use in further calculations. It was realized in line 203-233. 
+I would noticed that for interpolation was used the spline function. It really helps to create smooth trajectories, without worrying about all the math behind.
 
+2. Cost Functions and Finite State Machine
+The next main problem of the project is to somehow to "teach" the car to select the safest direction for next movement. The car rides on the road of three lanes. 
+So obviously we can choose at least from 3 options: KEEP current lane and switch to LEFT or RIGHT lane. Each decision will have different weight depends
+on what right now happens across the car.
+The LEFT and RIGHT cost functions is almost the same. We calculate if the car has enough distance between in front and behind the moving cars and 
+penalise illegal directions from the current lane.
+
+So in general the decision to change lane is only taken when it's safe and making sure that:
+- the car doesn't have collisions;
+- the car stays close the middle of the lane except when overtaking other vehicles;
+- the car doesn't spend more than a 3 second length outside the lanes during changing lanes;
+- the car stays inside one of the 3 lanes on the right hand side of the road;
+- the car is able to change lanes
+- the car is able to smoothly change lanes when it makes sense to do so, such as when behind a slower moving car and an adjacent lane is clear of other traffic.
+
+Function `NextAction` return most safe action after calculating and sorting cost values.
+
+The planner also implements a JMT (Jerk Minimizing Trajectory) generator in order to create and drive smooth and safe paths when the car needs to change lanes or just to stay in the same lane without spikes on the acceleration nor jerk values.
+  
+```
+switch (NextAction(telemetry_data)) {
+        case LEFT:
+            points = LeftCourse(telemetry_data);
+            break;
+        case RIGHT:
+            points = RightCourse(telemetry_data);
+            break;
+        case KEEP:
+            points = StraightCourse(telemetry_data);
+            break;
+    }
+
+path_t path = JerkPath(points, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+```
+ 
+## Recap
+The SD Car is completely able to complete a track lap driving at max speed when it is possible and avoiding at any value, any kind of collisions or unsafe maneuvers. There are some straightforward challenges to the future like creating a complete behavior planner based on classification algorithms which take into account the others car most likely future maneuvers and projected trajectories.
+Nevertheless, despite the good results, I think into the planner need to add two more states: PREPARE_LANE_CHANGE_LEFT/RIGHT. These new states will help to arrive to the goal much faster.
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).

@@ -233,7 +233,7 @@ path_t PathPlanner::Path(vector<Vehicle> &vehicles, vector<double> &map_waypoint
 }
 
 // Calculates jerk minimizing path
-vector<double> PathPlanner::computeMinimumJerk(vector<double> start, vector<double> end, double max_time, double time_inc) {
+vector<double> PathPlanner::MinimumJerk(vector<double> start, vector<double> end, double max_time, double time_inc) {
     Eigen::MatrixXd A(3, 3);
     Eigen::VectorXd b(3);
     Eigen::VectorXd x(3);
@@ -315,15 +315,15 @@ path_t PathPlanner::JerkPath(projection_t &new_setpoints, vector<double> &map_wa
     double end_d = LaneToD(new_setpoints.trg_lane);
 
     // Generate minimum jerk path in Frenet coordinates
-    vector<double> next_s_vals = computeMinimumJerk({start_s, start_speed, 0.0},
-                                                    {end_s, end_speed, 0.0},
-                                                    PATH_PLAN_SECONDS,
-                                                    PATH_PLAN_INCREMENT);
+    vector<double> next_s_vals = MinimumJerk({start_s, start_speed, 0.0},
+                                             {end_s, end_speed, 0.0},
+                                             PATH_PLAN_SECONDS,
+                                             PATH_PLAN_INCREMENT);
 
-    vector<double> next_d_vals = computeMinimumJerk({start_d, 0.0, 0.0},
-                                                    {end_d, 0.0, 0.0},
-                                                    PATH_PLAN_SECONDS,
-                                                    PATH_PLAN_INCREMENT);
+    vector<double> next_d_vals = MinimumJerk({start_d, 0.0, 0.0},
+                                             {end_d, 0.0, 0.0},
+                                             PATH_PLAN_SECONDS,
+                                             PATH_PLAN_INCREMENT);
 
     // Convert Frenet coordinates to map coordinates
     vector<double> next_x_vals = {};
@@ -335,7 +335,6 @@ path_t PathPlanner::JerkPath(projection_t &new_setpoints, vector<double> &map_wa
                                   map_waypoints_s,
                                   map_waypoints_x,
                                   map_waypoints_y);
-        cout << "x= " << xy[0] << "y= " << xy[1] << endl;
         next_x_vals.push_back(xy[0]);
         next_y_vals.push_back(xy[1]);
     }
@@ -345,6 +344,5 @@ path_t PathPlanner::JerkPath(projection_t &new_setpoints, vector<double> &map_wa
     path.path_y = next_y_vals;
     path.last_s = next_s_vals[next_s_vals.size() - 1];
     path.last_d = next_d_vals[next_d_vals.size() - 1];
-    cout << "last_s= " << path.last_s << "last_d= " << path.last_d << endl;
     return path;
 }
